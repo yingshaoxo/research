@@ -12,6 +12,7 @@ Running
 First install the required packages:
 
 .. code-block:: console
+
     $ sudo apt install libavdevice-dev libavfilter-dev libopus-dev libvpx-dev pkg-config
     $ sudo pip install aiohttp aiortc opencv-python
 
