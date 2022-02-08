@@ -1,2 +1,45 @@
 # research
 Some explorations about everything related to this project.
+
+
+## I have words to say
+Before we get started, there has a thing that we must understand: "we need a plan to achieve our goals".
+
+It is the same for software development.
+
+We need to splits a big project into multiple small parts.
+
+And then according to the list, we implement them one by one.
+
+## Goal
+Try to do a lot of experiments to know what kind of library we needed to build each part of the big project.
+
+Once we know how to implement them, we implement them.
+
+After that, we combine those small pieces into one single software.
+
+## Thinking
+### round 1
+1. we need a backend service for sure
+2. we need a frontend UI to display something to our user for sure
+
+### round 2
+1. we need to have a real-time data transfer solution for sure
+    - from the basic level, it's TCP/IP.
+    - for browser, it is webRTC
+    - for apps, it is GRPC
+    - it depends on what kind of software we want to build
+
+2. we need a UI framework to build the UI
+    - it can be vue3, flutter
+    - I'll use flutter for this time to simplify my life with `Row/Column` syntax; and also it's good to use with GRPC; and it checks your code before running
+
+3. I do not consider the deploy problem right now
+
+### round 3
+1. server-side
+    - experiment 1: can grpc work with rust and flutter (rust is not natively support by google grpc)
+    - experiment 2: can webRTC work with rust and flutter (this can change the way we transfer data)
+
+2. ui-side
+    - experiment 1: is it good to just use others [repository](https://github.com/PuzzleLeaf/flutter_clubhouse_ui_clone)?
