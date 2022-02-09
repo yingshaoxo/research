@@ -44,7 +44,7 @@ After that, we combine those small pieces into one single software.
 
 2. ui-side
     - experiment 1: is it good to just use others [repository](https://github.com/PuzzleLeaf/flutter_clubhouse_ui_clone)?
-        - temprarily add a flutter houseclub, see [this][2022/2.houseclub test]
+        - temprarily add a flutter houseclub, see [this](2022/2.houseclub test)
         - it should work if I simplify the whole stuff until one single page (the chat page)
 
 ### round 4
