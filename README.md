@@ -39,7 +39,17 @@ After that, we combine those small pieces into one single software.
 ### round 3
 1. server-side
     - experiment 1: can grpc work with rust and flutter (rust is not natively support by google grpc)
-    - experiment 2: can webRTC work with rust and flutter (this can change the way we transfer data)
+        - success, see [this](2022/1.tonic+flutter+grpc)
+    - ~~experiment 2: can webRTC work with rust and flutter (this can change the way we transfer data)~~
 
 2. ui-side
     - experiment 1: is it good to just use others [repository](https://github.com/PuzzleLeaf/flutter_clubhouse_ui_clone)?
+        - temprarily add a flutter houseclub
+        - it should work if I simplify the whole stuff until one single page (the chat page)
+
+### round 4
+1. ui-side
+    - experiment 1: can we simplify the other's UI repo into a single page, the chat page?
+    - experiment 2: can we use flutter to fetch a user's voice and convert it into bytes and sent it out by GRPC
+1. server-side
+    - experiment 1: can we receive voice bytes through GRPC, then forward them to other clients?
