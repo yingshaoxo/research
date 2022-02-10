@@ -1,0 +1,27 @@
+syntax = "proto3";
+package helloworld;
+
+service Greeter {
+    rpc SayHello (HelloRequest) returns (HelloReply);
+    rpc SendVoice(stream VoiceRequest) returns (Empty);
+    rpc GetVoice(Empty) returns (stream VoiceReply);
+}
+
+message Empty {
+}
+
+message VoiceRequest {
+    bytes voice = 1;
+}
+
+message VoiceReply {
+    bytes voice = 1;
+}
+
+message HelloRequest {
+   string name = 1;
+}
+
+message HelloReply {
+    string message = 1;
+}
