@@ -12,12 +12,17 @@ path = "src/server.rs"
 [dependencies]
 tonic = "0.6.2"
 prost = "0.9"
-# tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }
-tokio = { version = "1.14", features = ["full"] }
-futures = {version = "0.3", default-features = false, features = ["alloc"]}
-tokio-stream = { version = "0.1.7", features = ["sync"] }
+tokio = { version = "1", features = ["full", "tracing"] }
+tokio-stream = { version = "0.1", features = ["sync"] }
+futures = "0.3"
 async-stream = { version = "0.3.2" }
 futures-util = { version = "0.3.21" }
+futures-core = { version = "0.3.21" }
+
+# tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }
+# tokio = { version = "1.14", features = ["full"] }
+# tokio-stream = { version = "0.1.7", features = ["sync"] }
+# futures = {version = "0.3", default-features = false, features = ["alloc"]}
 
 [build-dependencies]
 tonic-build = "0.6.2"

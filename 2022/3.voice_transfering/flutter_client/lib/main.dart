@@ -52,6 +52,12 @@ class _MyHomePageState extends State<MyHomePage> {
             //       await grpcController.test();
             //     },
             //     child: Text("click me to test")),
+            TextButton(
+                onPressed: () async {
+                  print("start receving");
+                  await grpcController.getVoiceDataFromService();
+                },
+                child: Text("click me to listen")),
             Obx(() => Ripples(
                   color: Colors.blueAccent,
                   waveOn: microphoneController.isRecording.value,

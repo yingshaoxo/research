@@ -1,6 +1,7 @@
 import 'dart:core';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_client/src/generated/helloworld.pbgrpc.dart';
 import 'package:get/get.dart';
 import 'package:grpc/grpc.dart';
@@ -39,6 +40,18 @@ class GrpcControllr extends GetxController {
     final stub = GreeterClient(channel);
     final response = await stub.sendVoice(newStream);
     print('Greeter client received: ${response}');
+    // SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+
+    await channel.shutdown();
+  }
+
+  Future<void> getVoiceDataFromService() async {
+    final stub = GreeterClient(channel);
+
+    final response = stub.getVoice(Empty());
+    response.listen((VoiceReply voiceResponse) {
+      print('Greeter client received: ${voiceResponse.voice}');
+    });
 
     await channel.shutdown();
   }

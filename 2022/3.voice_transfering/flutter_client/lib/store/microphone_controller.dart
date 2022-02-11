@@ -57,7 +57,11 @@ class MicrophoneControllr extends GetxController {
     listener = stream!.listen(_calculateIntensitySamples);
 
     () async {
-      await grpcController.sendVoiceDataOut(stream);
+      try {
+        await grpcController.sendVoiceDataOut(stream);
+      } on Exception catch (_) {
+        print('service is not avaliable');
+      }
     }();
 
     return true;
@@ -120,7 +124,7 @@ class MicrophoneControllr extends GetxController {
       intToByte(result, f);
     }
 
-    print(result);
+    // print(result);
   }
 
   void intToByte(List<int> result, int i) {
