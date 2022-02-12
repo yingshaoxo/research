@@ -50,10 +50,10 @@ impl Greeter for MyGreeter {
         &self,
         request: Request<tonic::Streaming<VoiceRequest>>,
     ) -> Result<Response<Empty>, Status> {
-        println!("Got a request: {:?}", request);
+        println!("\n\ngot voice: {:?}", request);
 
         let mut stream = request.into_inner();
-        println!("Got a stream: {:?}", stream);
+        // println!("Got a stream: {:?}", stream);
         while let Some(data) = stream.next().await {
             // println!("data: {:?}", data);
             let data = data.unwrap();
@@ -75,9 +75,8 @@ impl Greeter for MyGreeter {
         &self,
         request: Request<Empty>,
     ) -> Result<Response<Self::GetVoiceStream>, Status> {
-        println!("\nGot a request for voice sending: {:?}", request);
-
-        let Empty {} = request.into_inner();
+        println!("\n\nrequest voice: {:?}", request);
+        // let Empty {} = request.into_inner();
 
         let rx = self.sender.subscribe();
         let stream = BroadcastStream::new(rx)
@@ -192,14 +191,14 @@ impl Greeter for MyGreeter {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let (tx, mut rx) = broadcast::channel(16);
 
-    let mut tempRx = tx.subscribe();
-    tokio::spawn(async move {
-        // while let data = tempRx.recv().await {
-        //     println!("data: {:?}", data);
-        // }
-    });
+    // let mut tempRx = tx.subscribe();
+    // tokio::spawn(async move {
+    //     // while let data = tempRx.recv().await {
+    //     //     println!("data: {:?}", data);
+    //     // }
+    // });
 
-    let address_string = "127.0.0.1:40051";
+    let address_string = "0.0.0.0:40051";
     let addr = address_string.parse()?;
     // let greeter = MyGreeter::default();
     let greeter = MyGreeter {

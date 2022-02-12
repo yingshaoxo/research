@@ -4,3 +4,8 @@ import 'package:get/get.dart';
 
 final microphoneController = Get.put(MicrophoneControllr());
 final grpcController = Get.put(GrpcControllr());
+
+void my_global_init() {
+  microphoneController.recorder.initialize();
+  microphoneController.player.initialize();
+}
