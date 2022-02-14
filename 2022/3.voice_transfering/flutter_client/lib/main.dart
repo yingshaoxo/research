@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_client/src/generated/helloworld.pbgrpc.dart';
 import 'package:flutter_client/store/global_controller_variables.dart';
 import 'package:get/get.dart';
-import 'package:grpc/grpc.dart';
 
 import 'dart:math' as math show sqrt;
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -58,21 +55,40 @@ class _MyHomePageState extends State<MyHomePage> {
             //       await grpcController.test();
             //     },
             //     child: Text("click me to test")),
-            TextButton(
-                onPressed: () async {
-                  print("start receving");
-                  await grpcController.getVoiceDataFromService();
-                },
-                child: Text("click me to listen")),
             Obx(() => Ripples(
                   color: Colors.blueAccent,
-                  waveOn: microphoneController.isRecording.value,
+                  waveOn: microphoneAndSpeakerController.isReceiving.value,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (microphoneAndSpeakerController.isReceiving.value) {
+                        microphoneAndSpeakerController.stopSpeaking();
+                      } else {
+                        await microphoneAndSpeakerController.startSpeaking();
+                      }
+                    },
+                    child: const Icon(
+                      Icons.speaker,
+                      color: Colors.white,
+                      size: 60.0,
+                    ),
+                    style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.all(10.0),
+                        shape: const CircleBorder(),
+                        primary: Colors.black),
+                  ),
+                )),
+            const SizedBox(
+              height: 40,
+            ),
+            Obx(() => Ripples(
+                  color: Colors.blueAccent,
+                  waveOn: microphoneAndSpeakerController.isRecording.value,
                   child: ElevatedButton(
                     onPressed: () {
-                      if (microphoneController.isRecording.value) {
-                        microphoneController.stopListening();
+                      if (microphoneAndSpeakerController.isRecording.value) {
+                        microphoneAndSpeakerController.stopRecording();
                       } else {
-                        microphoneController.startListening();
+                        microphoneAndSpeakerController.startRecording();
                       }
                     },
                     child: const Icon(

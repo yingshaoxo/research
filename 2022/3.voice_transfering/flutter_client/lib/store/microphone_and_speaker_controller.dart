@@ -1,21 +1,13 @@
-import 'dart:async';
 import 'dart:core';
-import 'dart:math';
 
 import 'package:flutter_client/store/global_controller_variables.dart';
 import 'package:get/get.dart';
-import 'package:mic_stream/mic_stream.dart';
 import 'package:sound_stream/sound_stream.dart';
 
-class MicrophoneControllr extends GetxController {
-  // final Rx<BalanceObject> currentBalanceObject =
-  //     BalanceObject(userId: '', name: '', balance: 0).obs;
-
-  // final RxList<OneStockOfUs> stockListOwnedByUser = RxList<OneStockOfUs>();
-
+class MicrophoneAndSpeakerController extends GetxController {
   final Rx<bool> isRecording = false.obs;
+  final Rx<bool> isReceiving = false.obs;
 
-  // final AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT;
   final RecorderStream recorder = RecorderStream();
   final PlayerStream player = PlayerStream();
 
@@ -23,7 +15,7 @@ class MicrophoneControllr extends GetxController {
 
   Future<void> initilizeFunction() async {}
 
-  Future<bool> startListening() async {
+  Future<bool> startRecording() async {
     recorder.status.listen((status) {
       if (status == SoundStreamStatus.Playing) {
         isRecording.trigger(true);
@@ -38,9 +30,10 @@ class MicrophoneControllr extends GetxController {
     () async {
       await recorder.start();
       try {
+        // print("recording started?");
         await grpcController.sendVoiceDataOut(recorderStream);
       } on Exception catch (_) {
-        print('service is not avaliable');
+        // print('service is not avaliable');
       }
     }();
 
@@ -49,17 +42,51 @@ class MicrophoneControllr extends GetxController {
     return true;
   }
 
-  bool stopListening() {
+  bool stopRecording() {
     if (!isRecording.value) return false;
 
     () async {
       if (isRecording.value) {
-        recorder.stop();
+        await recorder.stop();
+        await grpcController.shutdownSendingChannel();
       }
-      // grpcController.shutdownTheChannel();
     }();
 
     print("STOP LISTENING");
+
+    return true;
+  }
+
+  Future<bool> startSpeaking() async {
+    player.status.listen((status) {
+      if (status == SoundStreamStatus.Playing) {
+        isReceiving.trigger(true);
+      } else {
+        isReceiving.trigger(false);
+      }
+    });
+
+    () async {
+      await player.start();
+      await grpcController.getVoiceDataFromService();
+    }();
+
+    print("STARRT speaking");
+
+    return true;
+  }
+
+  bool stopSpeaking() {
+    if (!isReceiving.value) return false;
+
+    () async {
+      if (isReceiving.value) {
+        await player.stop();
+        await grpcController.shutdownReceivingChannel();
+      }
+    }();
+
+    print("STOP Speaking");
 
     return true;
   }

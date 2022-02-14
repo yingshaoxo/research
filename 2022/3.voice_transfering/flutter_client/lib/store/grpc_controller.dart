@@ -1,33 +1,50 @@
 import 'dart:core';
 import 'dart:typed_data';
 
-import 'package:audioplayers/audioplayers.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_client/src/generated/helloworld.pbgrpc.dart';
 import 'package:flutter_client/store/global_controller_variables.dart';
 import 'package:get/get.dart';
 import 'package:grpc/grpc.dart';
 
-import 'package:stream_transform/stream_transform.dart';
+// const hostIPAddress = "10.0.2.2";
+const hostIPAddress = "192.168.50.189";
+
+const portNumber = 40051;
 
 class GrpcControllr extends GetxController {
-  final Rx<bool> isReceiving = false.obs;
-  AudioPlayer audioPlayer = AudioPlayer();
-
-  final channel = ClientChannel(
-    // '127.0.0.1',
-    "10.0.2.2",
-    // "192.168.50.189",
-    port: 40051,
+  ClientChannel sendingChannel = ClientChannel(
+    hostIPAddress,
+    port: portNumber,
     options: const ChannelOptions(credentials: ChannelCredentials.insecure()),
   );
 
+  ClientChannel receivingChannel = ClientChannel(
+    hostIPAddress,
+    port: portNumber,
+    options: const ChannelOptions(credentials: ChannelCredentials.insecure()),
+  );
+
+  void recreateSendingChannel() {
+    sendingChannel = ClientChannel(
+      hostIPAddress,
+      port: portNumber,
+      options: const ChannelOptions(credentials: ChannelCredentials.insecure()),
+    );
+  }
+
+  void recreateReceivingChannel() {
+    receivingChannel = ClientChannel(
+      hostIPAddress,
+      port: portNumber,
+      options: const ChannelOptions(credentials: ChannelCredentials.insecure()),
+    );
+  }
+
   Future<void> test() async {
-    final stub = GreeterClient(channel);
+    final stub = GreeterClient(sendingChannel);
     final response = await stub.sayHello(HelloRequest()..name = 'you');
     print('Greeter client received: ${response.message}');
-    await channel.shutdown();
+    await sendingChannel.shutdown();
   }
 
   Stream<VoiceRequest> getNewVoiceStreamForUpload(Stream stream) async* {
@@ -44,30 +61,39 @@ class GrpcControllr extends GetxController {
 
     Stream<VoiceRequest> newStream = getNewVoiceStreamForUpload(stream);
 
-    final stub = GreeterClient(channel);
+    final stub = GreeterClient(sendingChannel);
     final response = await stub.sendVoice(newStream);
     print('Greeter client received: ${response}');
-    // SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-
-    await channel.shutdown();
+    // SystemChannels.platform.invokeMethod('SystemNavigator.pop'); // exit app
   }
 
   Future<void> getVoiceDataFromService() async {
-    final stub = GreeterClient(channel);
+    final stub = GreeterClient(receivingChannel);
 
-    await microphoneController.player.start();
+    // await microphoneAndSpeakerController.player.start();
 
     final response = stub.getVoice(Empty());
     response.listen((VoiceReply voiceResponse) {
       () async {
-        microphoneController.player
+        print(voiceResponse);
+        microphoneAndSpeakerController.player
             .writeChunk(Uint8List.fromList(voiceResponse.voice));
       }();
       print('Greeter client received: ${voiceResponse.voice}');
     });
+
+    microphoneAndSpeakerController.isReceiving.trigger(true);
   }
 
-  Future<void> shutdownTheChannel() async {
-    await channel.shutdown();
+  Future<void> shutdownSendingChannel() async {
+    await sendingChannel.shutdown();
+    recreateSendingChannel();
+    microphoneAndSpeakerController.isRecording.trigger(false);
+  }
+
+  Future<void> shutdownReceivingChannel() async {
+    await receivingChannel.shutdown();
+    recreateReceivingChannel();
+    microphoneAndSpeakerController.isReceiving.trigger(false);
   }
 }
