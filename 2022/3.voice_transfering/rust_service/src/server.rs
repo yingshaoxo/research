@@ -10,14 +10,22 @@ pub mod hello_world {
 use futures::stream::StreamExt;
 use std::pin::Pin;
 use tokio::sync::broadcast;
+use tokio::sync::mpsc;
+// use std::sync::Arc;
+// use tokio::sync::Mutex;
 use tokio_stream::wrappers::BroadcastStream;
+use tokio_stream::wrappers::ReceiverStream;
 use tokio_stream::Stream;
+
+use rawsample::{SampleFormat, SampleReader, SampleWriter};
 
 // #[derive(Debug, Default)]
 #[derive(Debug)]
 pub struct MyGreeter {
-    sender: broadcast::Sender<VoiceReply>,
-    // receiver: broadcast::Receiver<VoiceReply>,
+    mpsc_sender: mpsc::Sender<VoiceReply>,
+    // broadcast_receiver: broadcast::Receiver<VoiceReply>,
+    broadcast_sender: broadcast::Sender<VoiceReply>,
+    //use Arc<Mutex<T>> to share variables across threads
 }
 
 #[tonic::async_trait]
@@ -43,9 +51,11 @@ impl Greeter for MyGreeter {
 
         let mut stream = request.into_inner();
         while let Some(data) = stream.next().await {
+            // println!("got data: {:?}", data);
             let data = data.expect("error for data");
-            self.sender
+            self.mpsc_sender
                 .send(VoiceReply { voice: data.voice })
+                .await
                 .expect("sender: it should voice to receiver sent successfully");
         }
 
@@ -53,7 +63,6 @@ impl Greeter for MyGreeter {
         Ok(Response::new(reply))
     }
 
-    // type GetVoiceStream = <Result<VoiceReply, Status>>;
     type GetVoiceStream =
         Pin<Box<dyn Stream<Item = Result<VoiceReply, Status>> + Send + Sync + 'static>>;
 
@@ -64,8 +73,9 @@ impl Greeter for MyGreeter {
         println!("\n\nrequest voice: {:?}", request);
         // let Empty {} = request.into_inner();
 
-        let rx = self.sender.subscribe();
-        let stream = BroadcastStream::new(rx)
+        let broadcast_receiver = self.broadcast_sender.subscribe();
+
+        let stream = BroadcastStream::new(broadcast_receiver)
             .filter_map(|res| async move { res.ok() })
             .map(Ok);
         let stream: Self::GetVoiceStream = Box::pin(stream);
@@ -75,16 +85,96 @@ impl Greeter for MyGreeter {
     }
 }
 
+async fn get_float_vector_samples_from_bytes_samples(bytes: &[u8]) -> Vec<f32> {
+    // let mut reader = SampleReader::new(bytes);
+    // let mut samples = Vec::new();
+    // while let Some(sample) = reader.next().await {
+    //     samples.push(sample.unwrap());
+    // }
+    // samples
+    let mut values = Vec::new();
+    let mut slice: &[u8] = &bytes;
+    // read the raw bytes back as samples into the new vec
+    f32::read_all_samples(&mut slice, &mut values, &SampleFormat::S16LE).unwrap();
+    values
+}
+
+async fn add_float_vector_samples_togather(
+    vector_signal1: Vec<f32>,
+    vector_signal2: Vec<f32>,
+) -> Vec<f32> {
+    if vector_signal1.len() != vector_signal2.len() {
+        return vector_signal1;
+    }
+
+    let mut vector_signal_merged = Vec::new();
+
+    for i in 0..vector_signal1.len() {
+        vector_signal_merged.push(vector_signal1[i] + vector_signal2[i]);
+    }
+
+    vector_signal_merged
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let (tx, mut _rx) = broadcast::channel(16);
+    let (mpsc_sender, mpsc_receiver): (mpsc::Sender<VoiceReply>, mpsc::Receiver<VoiceReply>) =
+        mpsc::channel(32); //A multi-producer, single-consumer queue for sending values across asynchronous tasks.
+    let (broadcast_sender, mut _broadcast_receiver) = broadcast::channel(32); //A multi-producer, multi-consumer broadcast queue. Each sent value is seen by all consumers.
+
+    let another_broadcast_sender = broadcast::Sender::clone(&broadcast_sender);
+
+    tokio::spawn(async move {
+        let mut mpsc_receiver_stream = ReceiverStream::new(mpsc_receiver);
+
+        let mut vec = Vec::new();
+
+        while let Some(data) = mpsc_receiver_stream.next().await {
+            // println!("got data: {:?}", data);
+
+            vec.push(data.voice.clone());
+
+            if vec.len() == 4 {
+                let vector_signal1 = get_float_vector_samples_from_bytes_samples(&vec[0]);
+                let vector_signal2 = get_float_vector_samples_from_bytes_samples(&vec[1]);
+                let vector_signal3 = get_float_vector_samples_from_bytes_samples(&vec[2]);
+                let vector_signal4 = get_float_vector_samples_from_bytes_samples(&vec[3]);
+
+                let vector_signal_merged =
+                    add_float_vector_samples_togather(vector_signal1.await, vector_signal2.await)
+                        .await;
+                let vector_signal_merged =
+                    add_float_vector_samples_togather(vector_signal_merged, vector_signal3.await)
+                        .await;
+                let vector_signal_merged =
+                    add_float_vector_samples_togather(vector_signal_merged, vector_signal4.await)
+                        .await;
+
+                // create a vec to store raw bytes
+                let mut rawbytes: Vec<u8> = Vec::new();
+                // write the samples as raw bytes
+                f32::write_samples(&vector_signal_merged, &mut rawbytes, &SampleFormat::S32LE)
+                    .unwrap();
+
+                // broadcast_sender
+                //     .send(VoiceReply { voice: rawbytes })
+                //     .expect("sender: it should voice to receiver sent successfully");
+
+                vec.clear();
+            }
+
+            broadcast_sender
+                .send(VoiceReply { voice: data.voice })
+                .expect("sender: it should voice to receiver sent successfully");
+        }
+    });
 
     let address_string = "0.0.0.0:40051";
     let addr = address_string.parse()?;
 
     let greeter = MyGreeter {
-        sender: tx,
-        // receiver: rx,
+        mpsc_sender: mpsc_sender,
+        broadcast_sender: another_broadcast_sender,
     };
 
     println!("Server is running on http://{} ...", address_string);
