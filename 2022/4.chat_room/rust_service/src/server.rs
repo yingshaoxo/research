@@ -1,30 +1,31 @@
 use tonic::{transport::Server, Request, Response, Status};
 
 use hello_world::greeter_server::{Greeter, GreeterServer};
-use hello_world::{Empty, HelloReply, HelloRequest, VoiceReply, VoiceRequest};
+use hello_world::{
+    CurrentUsersUuidReply, Empty, HelloReply, HelloRequest, VoiceReply, VoiceRequest,
+};
 
 pub mod hello_world {
     tonic::include_proto!("helloworld"); //This is the package name?
 }
 
+use std::sync::Arc;
+use tokio::sync::Mutex;
+
 use futures::stream::StreamExt;
 use std::pin::Pin;
 use tokio::sync::broadcast;
-use tokio::sync::mpsc;
-// use std::sync::Arc;
-// use tokio::sync::Mutex;
 use tokio_stream::wrappers::BroadcastStream;
-use tokio_stream::wrappers::ReceiverStream;
 use tokio_stream::Stream;
 
-use rawsample::{SampleFormat, SampleReader, SampleWriter};
+use rawsample::{SampleFormat, SampleReader};
 
 // #[derive(Debug, Default)]
 #[derive(Debug)]
 pub struct MyGreeter {
-    mpsc_sender: mpsc::Sender<VoiceReply>,
-    // broadcast_receiver: broadcast::Receiver<VoiceReply>,
+    current_users: Arc<Mutex<Vec<String>>>,
     broadcast_sender: broadcast::Sender<VoiceReply>,
+    // broadcast_receiver: broadcast::Receiver<VoiceReply>,
     //use Arc<Mutex<T>> to share variables across threads
 }
 
@@ -53,13 +54,25 @@ impl Greeter for MyGreeter {
         while let Some(data) = stream.next().await {
             // println!("got data: {:?}", data);
             let data = data.expect("error for data");
-            self.mpsc_sender
+
+            let this_uuid = data.uuid.clone();
+            let current_users = self.current_users.clone();
+            tokio::spawn(async move {
+                let mut current_users = current_users.lock().await;
+                async {
+                    if !current_users.contains(&this_uuid) {
+                        current_users.push(this_uuid);
+                    }
+                }
+                .await;
+            });
+
+            self.broadcast_sender
                 .send(VoiceReply {
                     uuid: data.uuid,
                     timestamp: data.timestamp,
                     voice: data.voice,
                 })
-                .await
                 .expect("sender: it should voice to receiver sent successfully");
         }
 
@@ -86,6 +99,17 @@ impl Greeter for MyGreeter {
         let res = Response::new(stream);
 
         Ok(res)
+    }
+
+    async fn get_current_users_uuid(
+        &self,
+        request: tonic::Request<Empty>,
+    ) -> Result<tonic::Response<CurrentUsersUuidReply>, tonic::Status> {
+        println!("\n\nrequest uuid list: {:?}", request);
+
+        return Ok(tonic::Response::new(CurrentUsersUuidReply {
+            uuid: self.current_users.lock().await.clone(),
+        }));
     }
 }
 
@@ -122,33 +146,17 @@ async fn add_float_vector_samples_togather(
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let (mpsc_sender, mpsc_receiver): (mpsc::Sender<VoiceReply>, mpsc::Receiver<VoiceReply>) =
-        mpsc::channel(32); //A multi-producer, single-consumer queue for sending values across asynchronous tasks.
-    let (broadcast_sender, mut _broadcast_receiver) = broadcast::channel(32); //A multi-producer, multi-consumer broadcast queue. Each sent value is seen by all consumers.
-
-    let another_broadcast_sender = broadcast::Sender::clone(&broadcast_sender);
-
-    tokio::spawn(async move {
-        let mut mpsc_receiver_stream = ReceiverStream::new(mpsc_receiver);
-
-        while let Some(data) = mpsc_receiver_stream.next().await {
-            // println!("got data: {:?}", data);
-            broadcast_sender
-                .send(VoiceReply {
-                    uuid: data.uuid,
-                    timestamp: data.timestamp,
-                    voice: data.voice,
-                })
-                .expect("sender: it should voice to receiver sent successfully");
-        }
-    });
-
+    let (broadcast_sender, _broadcast_receiver) = broadcast::channel(32); //A multi-producer, multi-consumer broadcast queue. Each sent value is seen by all consumers.
+                                                                          // let another_broadcast_sender = broadcast::Sender::clone(&broadcast_sender);
     let address_string = "0.0.0.0:40051";
     let addr = address_string.parse()?;
 
+    let current_users = Arc::new(Mutex::new(Vec::new()));
+
     let greeter = MyGreeter {
-        mpsc_sender: mpsc_sender,
-        broadcast_sender: another_broadcast_sender,
+        current_users: current_users,
+        broadcast_sender: broadcast_sender,
+        // broadcast_receiver: broadcast_receiver,
     };
 
     println!("Server is running on http://{} ...", address_string);

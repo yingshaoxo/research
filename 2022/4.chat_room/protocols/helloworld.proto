@@ -5,6 +5,7 @@ service Greeter {
     rpc SayHello (HelloRequest) returns (HelloReply);
     rpc SendVoice(stream VoiceRequest) returns (Empty);
     rpc GetVoice(Empty) returns (stream VoiceReply);
+    rpc GetCurrentUsersUUID(Empty) returns (CurrentUsersUUIDReply);
 }
 
 message Empty {
@@ -20,6 +21,10 @@ message VoiceReply {
     string uuid = 1;
     int64 timestamp = 2;
     bytes voice = 3;
+}
+
+message CurrentUsersUUIDReply {
+    repeated string uuid = 1;
 }
 
 message HelloRequest {

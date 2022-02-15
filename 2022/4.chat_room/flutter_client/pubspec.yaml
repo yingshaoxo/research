@@ -31,6 +31,16 @@ dependencies:
   country_code_picker: ^1.7.0
   pull_to_refresh: ^2.0.0
 
+  grpc: ^3.0.2
+  protobuf: ^2.0.1
+
+  get: ^4.6.1
+  mic_stream: ^0.5.3+1
+  stream_transform: ^2.0.0
+  audioplayers: ^0.20.1
+  sound_stream: ^0.3.0
+  device_info_plus: ^3.2.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

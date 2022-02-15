@@ -19,13 +19,13 @@ class User {
 
   factory User.fromJson(json) {
     return User(
-      name: json['name'],
-      username: json['username'],
-      profileImage: json['profileImage'],
-      lastAccessTime: json['lastAccessTime'],
-      followers: json['followers'],
-      following: json['following'],
-      isNewUser: json['isNewUser'],
+      name: json['name'] ?? "",
+      username: json['username'] ?? "",
+      profileImage: json['profileImage'] ?? "",
+      lastAccessTime: json['lastAccessTime'] ?? "",
+      followers: json['followers'] ?? "",
+      following: json['following'] ?? '',
+      isNewUser: json['isNewUser'] ?? false,
     );
   }
 }
