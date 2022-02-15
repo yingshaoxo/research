@@ -49,9 +49,16 @@ After that, we combine those small pieces into one single software.
 
 ### round 4
 1. ui-side
-    - experiment 1: can we simplify the other's UI repo into a single page, the chat page?
+    - experiment 1: can we makde a simple UI that does record and play for the audio stream?
+        - yes, we can!
     - experiment 2: can we use flutter to fetch a user's voice and convert it into bytes and sent it out by GRPC
         - yes, we can! see [this](2022/3.voice_transfering/flutter_client)
 1. server-side
     - experiment 1: can we receive voice bytes through GRPC, then forward them to other clients?
         - yes, we can! see [this](2022/3.voice_transfering/rust_service)
+
+### round 5
+- experiment 1: can we simplify the other's UI repo into a single page, the chat page?
+    - yes, we can! see [this](2022/4.chat_room/flutter_client)
+- experiment 2: can we map multiple users' audio streams into the UI in real-time? I mean display who is in speaking.
+    - working on...
