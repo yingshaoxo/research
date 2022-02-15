@@ -43,6 +43,7 @@ dependencies:
   stream_transform: ^2.0.0
   audioplayers: ^0.20.1
   sound_stream: ^0.3.0
+  device_info_plus: ^3.2.1
 
 dev_dependencies:
   flutter_test:

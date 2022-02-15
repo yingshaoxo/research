@@ -19,22 +19,26 @@ final $typed_data.Uint8List emptyDescriptor = $convert.base64Decode('CgVFbXB0eQ=
 const VoiceRequest$json = const {
   '1': 'VoiceRequest',
   '2': const [
-    const {'1': 'voice', '3': 1, '4': 1, '5': 12, '10': 'voice'},
+    const {'1': 'uuid', '3': 1, '4': 1, '5': 9, '10': 'uuid'},
+    const {'1': 'timestamp', '3': 2, '4': 1, '5': 3, '10': 'timestamp'},
+    const {'1': 'voice', '3': 3, '4': 1, '5': 12, '10': 'voice'},
   ],
 };
 
 /// Descriptor for `VoiceRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List voiceRequestDescriptor = $convert.base64Decode('CgxWb2ljZVJlcXVlc3QSFAoFdm9pY2UYASABKAxSBXZvaWNl');
+final $typed_data.Uint8List voiceRequestDescriptor = $convert.base64Decode('CgxWb2ljZVJlcXVlc3QSEgoEdXVpZBgBIAEoCVIEdXVpZBIcCgl0aW1lc3RhbXAYAiABKANSCXRpbWVzdGFtcBIUCgV2b2ljZRgDIAEoDFIFdm9pY2U=');
 @$core.Deprecated('Use voiceReplyDescriptor instead')
 const VoiceReply$json = const {
   '1': 'VoiceReply',
   '2': const [
-    const {'1': 'voice', '3': 1, '4': 1, '5': 12, '10': 'voice'},
+    const {'1': 'uuid', '3': 1, '4': 1, '5': 9, '10': 'uuid'},
+    const {'1': 'timestamp', '3': 2, '4': 1, '5': 3, '10': 'timestamp'},
+    const {'1': 'voice', '3': 3, '4': 1, '5': 12, '10': 'voice'},
   ],
 };
 
 /// Descriptor for `VoiceReply`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List voiceReplyDescriptor = $convert.base64Decode('CgpWb2ljZVJlcGx5EhQKBXZvaWNlGAEgASgMUgV2b2ljZQ==');
+final $typed_data.Uint8List voiceReplyDescriptor = $convert.base64Decode('CgpWb2ljZVJlcGx5EhIKBHV1aWQYASABKAlSBHV1aWQSHAoJdGltZXN0YW1wGAIgASgDUgl0aW1lc3RhbXASFAoFdm9pY2UYAyABKAxSBXZvaWNl');
 @$core.Deprecated('Use helloRequestDescriptor instead')
 const HelloRequest$json = const {
   '1': 'HelloRequest',

@@ -1,0 +1,114 @@
+// server.rs
+pub struct GameStateMachine{
+
+    // channel to receive the player action events
+    event_chan: mpsc::Receiver<PlayerActionEvent>,
+
+    // broadcast channel to send public events to all players
+    broadcast_chan: broadcast::Sender<GameEvents>,
+}
+
+impl GameStateMachine{
+    pub async fn run(&mut self){
+        // running in back group, will listen on the event_chan
+        // and update state. StateMachine will send events using 
+        // the mpsc Sender or broadcast Sender
+    }
+
+    pub fn new(
+        event_chan: mpsc::Receiver<PlayerActionEvent>,
+        broadcast_chan: broadcast::Sender<GameEvents>,
+    ) -> Self{
+        //...
+    }
+
+}
+
+
+
+
+
+// grpc_server.rs
+pub struct MyGrpcService{
+    event_chan: mpsc::Sender<PlayerActionEvent>,
+
+    broadcast_chan: broadcast::Receiver<GameEvents>,
+}
+
+/// Tonic grpc service 
+#[tonic::async_trait]
+impl PlayerAction for MyGrpcService{
+    async fn send_action(
+        &self,
+        req: Request<ActionRequest>
+    ) -> Result<Response<ActionResponse>, Status>{
+        // ...
+        // Forward the user action to game state machine using the tokio channel
+        // this kind works, but not sure if this is the right way to do this
+        self.event_chan.send(req.inner().into()).await.unwrap();
+
+        //...
+    }
+
+    type GameEventStream = ReceiverStream<Result<EventResponse, Status>>;
+
+    async fn game_event(
+        &self,
+        req: Request<GameStartRequest>,
+    ) -> Result<Response<Self::GameEventStream>, Status> {
+        // ...
+        // NOTE: BELOW CODE doesn't compile, but that what I was hopping to do
+        loop{
+            // Not compile, but that is what I was hopping to achieve
+            // I need &mut here to be able to execute recv()
+            // I can use Arc<Mutex<Receiver<T>>> here, but this doesn't feel right
+            let Some(event) = self.broadcast_events.recv().await {
+                // if event is private and not to this player,
+                //   -> skip sending the event to the stream
+                // else
+                //   -> send the event to the stream
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+// main.rs
+#[tokio::main]
+async fn main() {
+
+    let (event_chan_tx, event_chan_rx) = tokio::mpsc::channel(100);
+    let (broadcast_tx, broadcast_rx) = tokio::broadcast::channel(100);
+
+    let state_machine = GameStateMachine::new(event_chan_rx, broadcast_tx);
+    tokio::spawn(async move {
+        state_machine.run().await;
+    });
+
+    let grpc = MyGrpcService{
+        event_chan: event_chan_tx,
+        broadcast_events: broadcast_rx
+    };
+
+    tonic::transport::Server::builder()
+        .add_service(PlayerActionServer::new(grpc))
+        .serve("[::1]:50051".to_socket_addrs().unwrap().next().unwrap())
+        .await
+        .unwrap();
+
+    Ok(())
+
+}
+
+
+
+
+
+
+
+https://discord.com/channels/500028886025895936/628706823104626710/926166997329391616

@@ -1,0 +1,25 @@
+[package]
+name = "rust_service"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]] # Bin to run the HelloWorld gRPC server
+name = "server"
+path = "src/server.rs"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+tonic = "0.6.2"
+prost = "0.9"
+tokio = { version = "1", features = ["full", "tracing"] }
+tokio-stream = { version = "0.1", features = ["sync"] }
+futures = "0.3"
+async-stream = { version = "0.3.2" }
+futures-util = { version = "0.3.21" }
+futures-core = { version = "0.3.21" }
+rawsample = { version = "0.2.0" }
+# dasp = { version = "0.11.0", features = ["all"] }
+
+[build-dependencies]
+tonic-build = "0.6.2"

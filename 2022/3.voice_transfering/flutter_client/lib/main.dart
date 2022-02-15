@@ -36,7 +36,9 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    my_global_init();
+    () async {
+      await my_global_init();
+    }();
   }
 
   @override

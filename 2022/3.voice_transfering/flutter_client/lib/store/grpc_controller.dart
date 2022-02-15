@@ -3,12 +3,12 @@ import 'dart:typed_data';
 
 import 'package:flutter_client/src/generated/helloworld.pbgrpc.dart';
 import 'package:flutter_client/store/global_controller_variables.dart';
+import 'package:flutter_client/utils.dart';
 import 'package:get/get.dart';
 import 'package:grpc/grpc.dart';
 
-// const hostIPAddress = "10.0.2.2";
-const hostIPAddress = "192.168.50.189";
-
+const hostIPAddress = "10.0.2.2";
+// const hostIPAddress = "192.168.50.189";
 const portNumber = 40051;
 
 class GrpcControllr extends GetxController {
@@ -50,6 +50,8 @@ class GrpcControllr extends GetxController {
   Stream<VoiceRequest> getNewVoiceStreamForUpload(Stream stream) async* {
     await for (final value in stream) {
       VoiceRequest voiceRequest = VoiceRequest()..voice = value.cast<int>();
+      voiceRequest.uuid = variableController.ourUUID;
+      voiceRequest.timestamp = getCurrentTimeInMilliseconds();
       yield voiceRequest;
     }
   }

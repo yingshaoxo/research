@@ -7,6 +7,7 @@
 
 import 'dart:core' as $core;
 
+import 'package:fixnum/fixnum.dart' as $fixnum;
 import 'package:protobuf/protobuf.dart' as $pb;
 
 class Empty extends $pb.GeneratedMessage {
@@ -40,15 +41,25 @@ class Empty extends $pb.GeneratedMessage {
 
 class VoiceRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'VoiceRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'helloworld'), createEmptyInstance: create)
-    ..a<$core.List<$core.int>>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'voice', $pb.PbFieldType.OY)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'uuid')
+    ..aInt64(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'timestamp')
+    ..a<$core.List<$core.int>>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'voice', $pb.PbFieldType.OY)
     ..hasRequiredFields = false
   ;
 
   VoiceRequest._() : super();
   factory VoiceRequest({
+    $core.String? uuid,
+    $fixnum.Int64? timestamp,
     $core.List<$core.int>? voice,
   }) {
     final _result = create();
+    if (uuid != null) {
+      _result.uuid = uuid;
+    }
+    if (timestamp != null) {
+      _result.timestamp = timestamp;
+    }
     if (voice != null) {
       _result.voice = voice;
     }
@@ -76,26 +87,54 @@ class VoiceRequest extends $pb.GeneratedMessage {
   static VoiceRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.List<$core.int> get voice => $_getN(0);
+  $core.String get uuid => $_getSZ(0);
   @$pb.TagNumber(1)
-  set voice($core.List<$core.int> v) { $_setBytes(0, v); }
+  set uuid($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasVoice() => $_has(0);
+  $core.bool hasUuid() => $_has(0);
   @$pb.TagNumber(1)
-  void clearVoice() => clearField(1);
+  void clearUuid() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $fixnum.Int64 get timestamp => $_getI64(1);
+  @$pb.TagNumber(2)
+  set timestamp($fixnum.Int64 v) { $_setInt64(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasTimestamp() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearTimestamp() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.List<$core.int> get voice => $_getN(2);
+  @$pb.TagNumber(3)
+  set voice($core.List<$core.int> v) { $_setBytes(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasVoice() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearVoice() => clearField(3);
 }
 
 class VoiceReply extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'VoiceReply', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'helloworld'), createEmptyInstance: create)
-    ..a<$core.List<$core.int>>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'voice', $pb.PbFieldType.OY)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'uuid')
+    ..aInt64(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'timestamp')
+    ..a<$core.List<$core.int>>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'voice', $pb.PbFieldType.OY)
     ..hasRequiredFields = false
   ;
 
   VoiceReply._() : super();
   factory VoiceReply({
+    $core.String? uuid,
+    $fixnum.Int64? timestamp,
     $core.List<$core.int>? voice,
   }) {
     final _result = create();
+    if (uuid != null) {
+      _result.uuid = uuid;
+    }
+    if (timestamp != null) {
+      _result.timestamp = timestamp;
+    }
     if (voice != null) {
       _result.voice = voice;
     }
@@ -123,13 +162,31 @@ class VoiceReply extends $pb.GeneratedMessage {
   static VoiceReply? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.List<$core.int> get voice => $_getN(0);
+  $core.String get uuid => $_getSZ(0);
   @$pb.TagNumber(1)
-  set voice($core.List<$core.int> v) { $_setBytes(0, v); }
+  set uuid($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasVoice() => $_has(0);
+  $core.bool hasUuid() => $_has(0);
   @$pb.TagNumber(1)
-  void clearVoice() => clearField(1);
+  void clearUuid() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $fixnum.Int64 get timestamp => $_getI64(1);
+  @$pb.TagNumber(2)
+  set timestamp($fixnum.Int64 v) { $_setInt64(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasTimestamp() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearTimestamp() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.List<$core.int> get voice => $_getN(2);
+  @$pb.TagNumber(3)
+  set voice($core.List<$core.int> v) { $_setBytes(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasVoice() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearVoice() => clearField(3);
 }
 
 class HelloRequest extends $pb.GeneratedMessage {
