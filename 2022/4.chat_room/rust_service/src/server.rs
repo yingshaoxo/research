@@ -2,7 +2,8 @@ use tonic::{transport::Server, Request, Response, Status};
 
 use hello_world::greeter_server::{Greeter, GreeterServer};
 use hello_world::{
-    CurrentUsersUuidReply, Empty, HelloReply, HelloRequest, VoiceReply, VoiceRequest,
+    CurrentUsersUuidReply, Empty, HelloReply, HelloRequest, StartSpeakingRequest,
+    StopSpeakingRequest, VoiceReply, VoiceRequest,
 };
 
 pub mod hello_world {
@@ -20,10 +21,83 @@ use tokio_stream::Stream;
 
 use rawsample::{SampleFormat, SampleReader};
 
+#[derive(Debug)]
+pub struct User {
+    uuid: String,
+    timestamp: i64,
+}
+
+impl Clone for User {
+    fn clone(&self) -> User {
+        User {
+            uuid: self.uuid.clone(),
+            timestamp: self.timestamp,
+        }
+    }
+}
+
+async fn get_timestamp() -> i64 {
+    let now = std::time::SystemTime::now();
+    let since_epoch = now
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap()
+        .as_millis();
+    return since_epoch as i64;
+}
+
+async fn add_user_only_if_not_exists(users: &mut Arc<Mutex<Vec<User>>>, new_user: User) {
+    let mut users = users.lock().await;
+    let mut found = false;
+    for user in users.iter() {
+        if user.uuid == new_user.uuid {
+            found = true;
+            break;
+        }
+    }
+    if !found {
+        users.push(new_user);
+    }
+}
+
+async fn remove_user_only_if_exists(users: &mut Arc<Mutex<Vec<User>>>, user: User) {
+    let mut users = users.lock().await;
+    users.retain(|a_user| !(a_user.uuid == user.uuid));
+}
+
+async fn update_user_timestamp(users: &mut Arc<Mutex<Vec<User>>>, uuid: String) {
+    let mut users = users.lock().await;
+    for user in users.iter_mut() {
+        if user.uuid == uuid {
+            user.timestamp = get_timestamp().await;
+            break;
+        }
+    }
+}
+
+async fn filter_out_users_that_do_not_active_for_more_than_x_milliseconds(
+    users: &mut Arc<Mutex<Vec<User>>>,
+    x: i32,
+) {
+    let now = get_timestamp().await;
+
+    let mut to_remove = Vec::new();
+    for user in users.lock().await.iter_mut() {
+        println!("time: {}", now - user.timestamp);
+        if (now - user.timestamp) > x.into() {
+            to_remove.push(user.uuid.clone());
+        }
+    }
+
+    users
+        .lock()
+        .await
+        .retain(|user| !to_remove.contains(&user.uuid));
+}
+
 // #[derive(Debug, Default)]
 #[derive(Debug)]
 pub struct MyGreeter {
-    current_users: Arc<Mutex<Vec<String>>>,
+    current_users: Arc<Mutex<Vec<User>>>,
     broadcast_sender: broadcast::Sender<VoiceReply>,
     // broadcast_receiver: broadcast::Receiver<VoiceReply>,
     //use Arc<Mutex<T>> to share variables across threads
@@ -53,18 +127,18 @@ impl Greeter for MyGreeter {
         let mut stream = request.into_inner();
         while let Some(data) = stream.next().await {
             // println!("got data: {:?}", data);
-            let data = data.expect("error for data");
+            let mut data = data.expect("error for data");
+            data.timestamp = get_timestamp().await; // client's time cannot be trusted
 
-            let this_uuid = data.uuid.clone();
-            let current_users = self.current_users.clone();
+            let new_user = User {
+                uuid: data.uuid.clone(),
+                timestamp: data.timestamp,
+            };
+            let mut current_users = self.current_users.clone();
+            let the_uuid = data.uuid.clone();
             tokio::spawn(async move {
-                let mut current_users = current_users.lock().await;
-                async {
-                    if !current_users.contains(&this_uuid) {
-                        current_users.push(this_uuid);
-                    }
-                }
-                .await;
+                add_user_only_if_not_exists(&mut current_users, new_user).await;
+                update_user_timestamp(&mut current_users, the_uuid).await;
             });
 
             self.broadcast_sender
@@ -107,9 +181,53 @@ impl Greeter for MyGreeter {
     ) -> Result<tonic::Response<CurrentUsersUuidReply>, tonic::Status> {
         println!("\n\nrequest uuid list: {:?}", request);
 
+        let mut current_users = self.current_users.clone();
+        filter_out_users_that_do_not_active_for_more_than_x_milliseconds(&mut current_users, 1000)
+            .await;
+
         return Ok(tonic::Response::new(CurrentUsersUuidReply {
-            uuid: self.current_users.lock().await.clone(),
+            uuid: self
+                .current_users
+                .lock()
+                .await
+                .clone()
+                .into_iter()
+                .map(|user| user.uuid)
+                .collect(),
         }));
+    }
+    async fn start_speaking(
+        &self,
+        request: tonic::Request<StartSpeakingRequest>,
+    ) -> Result<tonic::Response<Empty>, tonic::Status> {
+        let the_uuid = request.into_inner().uuid;
+        let mut current_users = self.current_users.clone();
+        add_user_only_if_not_exists(
+            &mut current_users,
+            User {
+                uuid: the_uuid.clone(),
+                timestamp: get_timestamp().await,
+            },
+        )
+        .await;
+        update_user_timestamp(&mut current_users, the_uuid).await;
+        Ok(Response::new(Empty {}))
+    }
+
+    async fn stop_speaking(
+        &self,
+        request: tonic::Request<StopSpeakingRequest>,
+    ) -> Result<tonic::Response<Empty>, tonic::Status> {
+        let mut current_users = self.current_users.clone();
+        remove_user_only_if_exists(
+            &mut current_users,
+            User {
+                uuid: request.into_inner().uuid,
+                timestamp: get_timestamp().await,
+            },
+        )
+        .await;
+        Ok(Response::new(Empty {}))
     }
 }
 

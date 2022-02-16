@@ -36,6 +36,7 @@ class MicrophoneAndSpeakerController extends GetxController {
       }
     }();
 
+    grpcController.startSpeaking();
     print("STARRT LISTENING");
 
     return true;
@@ -52,6 +53,7 @@ class MicrophoneAndSpeakerController extends GetxController {
     }();
 
     print("STOP LISTENING");
+    grpcController.stopSpeaking();
 
     return true;
   }

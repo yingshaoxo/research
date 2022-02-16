@@ -230,6 +230,100 @@ class CurrentUsersUUIDReply extends $pb.GeneratedMessage {
   $core.List<$core.String> get uuid => $_getList(0);
 }
 
+class StartSpeakingRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'StartSpeakingRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'helloworld'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'uuid')
+    ..hasRequiredFields = false
+  ;
+
+  StartSpeakingRequest._() : super();
+  factory StartSpeakingRequest({
+    $core.String? uuid,
+  }) {
+    final _result = create();
+    if (uuid != null) {
+      _result.uuid = uuid;
+    }
+    return _result;
+  }
+  factory StartSpeakingRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory StartSpeakingRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  StartSpeakingRequest clone() => StartSpeakingRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  StartSpeakingRequest copyWith(void Function(StartSpeakingRequest) updates) => super.copyWith((message) => updates(message as StartSpeakingRequest)) as StartSpeakingRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static StartSpeakingRequest create() => StartSpeakingRequest._();
+  StartSpeakingRequest createEmptyInstance() => create();
+  static $pb.PbList<StartSpeakingRequest> createRepeated() => $pb.PbList<StartSpeakingRequest>();
+  @$core.pragma('dart2js:noInline')
+  static StartSpeakingRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<StartSpeakingRequest>(create);
+  static StartSpeakingRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get uuid => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set uuid($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasUuid() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearUuid() => clearField(1);
+}
+
+class StopSpeakingRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'StopSpeakingRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'helloworld'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'uuid')
+    ..hasRequiredFields = false
+  ;
+
+  StopSpeakingRequest._() : super();
+  factory StopSpeakingRequest({
+    $core.String? uuid,
+  }) {
+    final _result = create();
+    if (uuid != null) {
+      _result.uuid = uuid;
+    }
+    return _result;
+  }
+  factory StopSpeakingRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory StopSpeakingRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  StopSpeakingRequest clone() => StopSpeakingRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  StopSpeakingRequest copyWith(void Function(StopSpeakingRequest) updates) => super.copyWith((message) => updates(message as StopSpeakingRequest)) as StopSpeakingRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static StopSpeakingRequest create() => StopSpeakingRequest._();
+  StopSpeakingRequest createEmptyInstance() => create();
+  static $pb.PbList<StopSpeakingRequest> createRepeated() => $pb.PbList<StopSpeakingRequest>();
+  @$core.pragma('dart2js:noInline')
+  static StopSpeakingRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<StopSpeakingRequest>(create);
+  static StopSpeakingRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get uuid => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set uuid($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasUuid() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearUuid() => clearField(1);
+}
+
 class HelloRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'HelloRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'helloworld'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'name')

@@ -60,6 +60,7 @@ class GrpcControllr extends GetxController {
       VoiceRequest voiceRequest = VoiceRequest()..voice = value.cast<int>();
       voiceRequest.uuid = variableController.ourUUID;
       voiceRequest.timestamp = getCurrentTimeInMilliseconds();
+      // print(voiceRequest.timestamp);
       yield voiceRequest;
     }
   }
@@ -107,11 +108,28 @@ class GrpcControllr extends GetxController {
     microphoneAndSpeakerController.isReceiving.trigger(false);
   }
 
-  Future<void> getCurrentUserUUIDlist() async {
+  Future<List<String>> getCurrentUserUUIDlist() async {
     final temporaryChannel = getATempraryChannel();
     final stub = GreeterClient(temporaryChannel);
     final response = await stub.getCurrentUsersUUID(Empty());
     print('Greeter client received: ${response.uuid}');
+    await temporaryChannel.shutdown();
+    return response.uuid;
+  }
+
+  Future<void> startSpeaking() async {
+    final temporaryChannel = getATempraryChannel();
+    final stub = GreeterClient(temporaryChannel);
+    final response = await stub.startSpeaking(
+        StartSpeakingRequest()..uuid = variableController.ourUUID);
+    await temporaryChannel.shutdown();
+  }
+
+  Future<void> stopSpeaking() async {
+    final temporaryChannel = getATempraryChannel();
+    final stub = GreeterClient(temporaryChannel);
+    final response = await stub
+        .stopSpeaking(StopSpeakingRequest()..uuid = variableController.ourUUID);
     await temporaryChannel.shutdown();
   }
 }

@@ -32,6 +32,16 @@ class GreeterClient extends $grpc.Client {
           ($0.Empty value) => value.writeToBuffer(),
           ($core.List<$core.int> value) =>
               $0.CurrentUsersUUIDReply.fromBuffer(value));
+  static final _$startSpeaking =
+      $grpc.ClientMethod<$0.StartSpeakingRequest, $0.Empty>(
+          '/helloworld.Greeter/StartSpeaking',
+          ($0.StartSpeakingRequest value) => value.writeToBuffer(),
+          ($core.List<$core.int> value) => $0.Empty.fromBuffer(value));
+  static final _$stopSpeaking =
+      $grpc.ClientMethod<$0.StopSpeakingRequest, $0.Empty>(
+          '/helloworld.Greeter/StopSpeaking',
+          ($0.StopSpeakingRequest value) => value.writeToBuffer(),
+          ($core.List<$core.int> value) => $0.Empty.fromBuffer(value));
 
   GreeterClient($grpc.ClientChannel channel,
       {$grpc.CallOptions? options,
@@ -60,6 +70,16 @@ class GreeterClient extends $grpc.Client {
       $0.Empty request,
       {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$getCurrentUsersUUID, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$0.Empty> startSpeaking($0.StartSpeakingRequest request,
+      {$grpc.CallOptions? options}) {
+    return $createUnaryCall(_$startSpeaking, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$0.Empty> stopSpeaking($0.StopSpeakingRequest request,
+      {$grpc.CallOptions? options}) {
+    return $createUnaryCall(_$stopSpeaking, request, options: options);
   }
 }
 
@@ -95,6 +115,22 @@ abstract class GreeterServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $0.Empty.fromBuffer(value),
         ($0.CurrentUsersUUIDReply value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.StartSpeakingRequest, $0.Empty>(
+        'StartSpeaking',
+        startSpeaking_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) =>
+            $0.StartSpeakingRequest.fromBuffer(value),
+        ($0.Empty value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.StopSpeakingRequest, $0.Empty>(
+        'StopSpeaking',
+        stopSpeaking_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) =>
+            $0.StopSpeakingRequest.fromBuffer(value),
+        ($0.Empty value) => value.writeToBuffer()));
   }
 
   $async.Future<$0.HelloReply> sayHello_Pre(
@@ -112,6 +148,16 @@ abstract class GreeterServiceBase extends $grpc.Service {
     return getCurrentUsersUUID(call, await request);
   }
 
+  $async.Future<$0.Empty> startSpeaking_Pre($grpc.ServiceCall call,
+      $async.Future<$0.StartSpeakingRequest> request) async {
+    return startSpeaking(call, await request);
+  }
+
+  $async.Future<$0.Empty> stopSpeaking_Pre($grpc.ServiceCall call,
+      $async.Future<$0.StopSpeakingRequest> request) async {
+    return stopSpeaking(call, await request);
+  }
+
   $async.Future<$0.HelloReply> sayHello(
       $grpc.ServiceCall call, $0.HelloRequest request);
   $async.Future<$0.Empty> sendVoice(
@@ -120,4 +166,8 @@ abstract class GreeterServiceBase extends $grpc.Service {
       $grpc.ServiceCall call, $0.Empty request);
   $async.Future<$0.CurrentUsersUUIDReply> getCurrentUsersUUID(
       $grpc.ServiceCall call, $0.Empty request);
+  $async.Future<$0.Empty> startSpeaking(
+      $grpc.ServiceCall call, $0.StartSpeakingRequest request);
+  $async.Future<$0.Empty> stopSpeaking(
+      $grpc.ServiceCall call, $0.StopSpeakingRequest request);
 }

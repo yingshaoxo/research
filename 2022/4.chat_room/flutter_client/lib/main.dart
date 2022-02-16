@@ -5,6 +5,9 @@ import 'package:club_house/store/global_controller_variables.dart';
 import 'package:club_house/util/style.dart';
 import 'package:club_house/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:cron/cron.dart';
+import 'package:get/get.dart';
+import 'package:grpc/grpc.dart';
 
 void main() {
   runApp(MyApp());
@@ -13,33 +16,8 @@ void main() {
 const userNumbersInThisRoom = 4;
 
 String getARandomCatPicturePath() {
-  return 'assets/images/cat_${getARandomNumber(0, userNumbersInThisRoom)}.png';
+  return 'assets/images/cat${getARandomNumber(1, userNumbersInThisRoom)}.jpg';
 }
-
-// User
-List names = [
-  'American Bobtail',
-  'British Shorthair',
-  'Cornish Rex',
-  'yingshaoxo',
-];
-
-List userData = List.generate(
-  userNumbersInThisRoom,
-  (index) => {
-    'name': names[index],
-    'username': '@${names[index].toString().split(' ')[0].toLowerCase()}',
-    'profileImage': getARandomCatPicturePath(),
-  },
-);
-
-Room myRoom = Room.fromJson({
-  'title': "yingshaoxo's chat room",
-  "users": List.generate(
-      userNumbersInThisRoom, (index) => User.fromJson(userData[index]))
-    ..shuffle(),
-  'speakerCount': userNumbersInThisRoom,
-});
 
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -55,6 +33,23 @@ class _MyAppState extends State<MyApp> {
     () async {
       await myGlobalInitFunction();
     }();
+
+    variableController.cron.schedule(Schedule(seconds: "*/1"), () async {
+      // print('every 1 minutes');
+      var newUUIDlist = await grpcController.getCurrentUserUUIDlist();
+
+      for (var uuid in newUUIDlist) {
+        if (!variableController.currentUsersUUID.contains(uuid)) {
+          variableController.currentUsersUUID.add(uuid);
+        }
+      }
+
+      for (var uuid in variableController.currentUsersUUID) {
+        if (!newUUIDlist.contains(uuid)) {
+          variableController.currentUsersUUID.remove(uuid);
+        }
+      }
+    });
   }
 
   @override
@@ -72,9 +67,22 @@ class _MyAppState extends State<MyApp> {
             ),
           ),
         ),
-        home: RoomPage(
-          room: myRoom,
-        )
+        home: Obx(() {
+          Room myRoom = Room.fromJson({
+            'title': "yingshaoxo's chat room",
+            "users": variableController.currentUsersUUID
+                .map((uuid) => User.fromJson({
+                      'name': uuid.substring(0, 8),
+                      'profileImage': getARandomCatPicturePath()
+                    }))
+                .toList(),
+            'speakerCount': variableController.currentUsersUUID.length,
+          });
+
+          return RoomPage(
+            room: myRoom,
+          );
+        })
         // home: WelcomePage(),
         );
   }

@@ -41,12 +41,6 @@ class RoomPage extends StatelessWidget {
               onTap: () {
                 //head picture
                 grpcController.getCurrentUserUUIDlist();
-                // History.pushPage(
-                //   context,
-                //   ProfilePage(
-                //     profile: myProfile,
-                //   ),
-                // );
               },
               child: RoundImage(
                 path: myProfile.profileImage,
@@ -91,9 +85,9 @@ class RoomPage extends StatelessWidget {
                     buildSpeakers(room.users.sublist(0, room.speakerCount)),
                     // buildOthers(room.users.sublist(room.speakerCount)),
                     Padding(
-                      padding: const EdgeInsets.only(left: 25),
+                      padding: const EdgeInsets.symmetric(horizontal: 30),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Obx(() => Ripples(
                                 color: Colors.blueAccent,
@@ -113,7 +107,7 @@ class RoomPage extends StatelessWidget {
                                   child: const Icon(
                                     Icons.speaker,
                                     color: Colors.white,
-                                    size: 60.0,
+                                    size: 55.0,
                                   ),
                                   style: ElevatedButton.styleFrom(
                                       padding: const EdgeInsets.all(10.0),
@@ -121,9 +115,6 @@ class RoomPage extends StatelessWidget {
                                       primary: Colors.black),
                                 ),
                               )),
-                          SizedBox(
-                            width: 40,
-                          ),
                           Obx(() => Ripples(
                                 color: Colors.blueAccent,
                                 waveOn: microphoneAndSpeakerController
@@ -142,7 +133,7 @@ class RoomPage extends StatelessWidget {
                                   child: const Icon(
                                     Icons.mic,
                                     color: Colors.white,
-                                    size: 60.0,
+                                    size: 55.0,
                                   ),
                                   style: ElevatedButton.styleFrom(
                                       padding: const EdgeInsets.all(10.0),

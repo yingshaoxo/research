@@ -49,6 +49,26 @@ const CurrentUsersUUIDReply$json = const {
 
 /// Descriptor for `CurrentUsersUUIDReply`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List currentUsersUUIDReplyDescriptor = $convert.base64Decode('ChVDdXJyZW50VXNlcnNVVUlEUmVwbHkSEgoEdXVpZBgBIAMoCVIEdXVpZA==');
+@$core.Deprecated('Use startSpeakingRequestDescriptor instead')
+const StartSpeakingRequest$json = const {
+  '1': 'StartSpeakingRequest',
+  '2': const [
+    const {'1': 'uuid', '3': 1, '4': 1, '5': 9, '10': 'uuid'},
+  ],
+};
+
+/// Descriptor for `StartSpeakingRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List startSpeakingRequestDescriptor = $convert.base64Decode('ChRTdGFydFNwZWFraW5nUmVxdWVzdBISCgR1dWlkGAEgASgJUgR1dWlk');
+@$core.Deprecated('Use stopSpeakingRequestDescriptor instead')
+const StopSpeakingRequest$json = const {
+  '1': 'StopSpeakingRequest',
+  '2': const [
+    const {'1': 'uuid', '3': 1, '4': 1, '5': 9, '10': 'uuid'},
+  ],
+};
+
+/// Descriptor for `StopSpeakingRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List stopSpeakingRequestDescriptor = $convert.base64Decode('ChNTdG9wU3BlYWtpbmdSZXF1ZXN0EhIKBHV1aWQYASABKAlSBHV1aWQ=');
 @$core.Deprecated('Use helloRequestDescriptor instead')
 const HelloRequest$json = const {
   '1': 'HelloRequest',
