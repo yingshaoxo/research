@@ -61,7 +61,7 @@ After that, we combine those small pieces into one single software.
 - experiment 1: can we simplify the other's UI repo into a single page, the chat page?
     - yes, we can! see [this](2022/4.chat_room/flutter_client)
 - experiment 2: can we map multiple users' audio streams into the UI in real-time? I mean display who is in speaking.
-    - working on...
+    - yes, we can! currently, I'm using the uuid to distinguish different users.
 
 ### round 6
 1. can we seperate rust code into multiple files?
