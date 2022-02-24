@@ -21,6 +21,9 @@ use tokio_stream::Stream;
 
 use rawsample::{SampleFormat, SampleReader};
 
+mod utils;
+use utils::my_utils::get_timestamp;
+
 #[derive(Debug)]
 pub struct User {
     uuid: String,
@@ -34,15 +37,6 @@ impl Clone for User {
             timestamp: self.timestamp,
         }
     }
-}
-
-async fn get_timestamp() -> i64 {
-    let now = std::time::SystemTime::now();
-    let since_epoch = now
-        .duration_since(std::time::UNIX_EPOCH)
-        .unwrap()
-        .as_millis();
-    return since_epoch as i64;
 }
 
 async fn add_user_only_if_not_exists(users: &mut Arc<Mutex<Vec<User>>>, new_user: User) {
