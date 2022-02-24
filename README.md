@@ -65,3 +65,7 @@ After that, we combine those small pieces into one single software.
 
 ### round 6
 1. can we seperate rust code into multiple files?
+    - yes, we can! you can see this file while I seperated the function. [utils.rs](2022/4.chat_room/rust_service/src/utils.rs)
+
+2. can we use rust to make a minimum jwt auth service?
+    - no, I didn't do it with rust, but instead, I did the same thing with python. see [this](2022/5.auth/python_jwt_auth_example)
