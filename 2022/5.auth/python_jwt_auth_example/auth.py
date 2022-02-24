@@ -44,7 +44,11 @@ def auth_jwt_string(raw_jwt_string):
     if not regex_validate_for_jwt(raw_jwt_string):
         return False
 
-    object = decode_jwt(raw_jwt_string)
+    try: 
+        object = decode_jwt(raw_jwt_string)
+    except Exception as e:
+        return False
+
     id = object.get('id')
     if id in many_users:
         return True

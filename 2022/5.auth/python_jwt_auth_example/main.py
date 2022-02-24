@@ -43,7 +43,7 @@ async def login(data: models.LoginInput):
 
 
 @ app.post("/get_data/", response_model=models.GetDataOutput)
-async def login(data: models.GetDataInput):
+async def get_data(data: models.GetDataInput):
     isValid = auth.auth_jwt_string(data.token)
     if isValid:
         return {
