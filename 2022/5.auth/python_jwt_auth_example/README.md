@@ -6,3 +6,8 @@ poetry install
 
 poetry run dev
 ```
+
+## test
+```bash
+poetry run test
+```
