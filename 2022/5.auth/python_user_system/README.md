@@ -1,4 +1,4 @@
-# Just play around to see how to use jwt to do auth for our users
+# Full version of user system with python and jwt and sqlite3
 
 ## run
 ```bash
