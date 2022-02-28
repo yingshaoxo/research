@@ -72,3 +72,6 @@ After that, we combine those small pieces into one single software.
 
 3. can we make a user system with the help of python?
     - yes, we can! I have made a full-version of user-system with sqlite, you can see it right in [here](2022/5.auth/python_user_system)
+
+4. can we use the `LiveKit` to build a Zoom-like conferencing app in under 100 lines of code?
+    - yes, we can! I have made a simple example to demonstrate how we can use their library to make a video chat room. see [this](2022/5.auth/LiveKit/simple_video_chat_room_demo)

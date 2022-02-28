@@ -1,0 +1,3 @@
+const url = 'ws://10.0.2.2:7880';
+const token =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDg1NTg3OTIsImlzcyI6IkFQSVZqZnlLSnduMzJjcCIsImp0aSI6IjEiLCJuYmYiOjE2NDU5NjY3OTIsInN1YiI6IjEiLCJ2aWRlbyI6eyJyb29tIjoiXHUwMDNjcm9vbS1uYW1lXHUwMDNlIiwicm9vbUpvaW4iOnRydWV9fQ.JVCOvaQkpyc3IYHhXPfSFvGWMKlfG3g1b1iserfNXiY";

@@ -1,0 +1,10 @@
+port: 7880
+rtc:
+    udp_port: 7882
+    tcp_port: 7881
+    use_external_ip: false
+keys:
+    APIVjfyKJwn32cp: IlSEwicTiSOQfaoJykKZzP26fQsV6Ielpw9VGSeiMeFF
+logging:
+    json: false
+    level: info
