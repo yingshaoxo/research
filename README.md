@@ -75,3 +75,13 @@ After that, we combine those small pieces into one single software.
 
 4. can we use the `LiveKit` to build a Zoom-like conferencing app in under 100 lines of code?
     - yes, we can! I have made a simple example to demonstrate how we can use their library to make a video chat room. see [this](2022/5.auth/LiveKit/simple_video_chat_room_demo)
+
+### round 7
+Find the best practice to design a product.
+
+- how about using `gitbook` to write needs docs?
+    - I trust it, it should be fine. (we could save it to github)
+- how about we use `draw.io` vscode extension to write the logic graph?
+    - ![example](example.drawio.svg)
+    - It should work.
+- how about using `figma` to design the UX? (I don't need to draw the UI since I'm a programmer. I make it based on my favor. But I indeed need to design the page routes and what kind of widgets shoud be apearing in which page)
